@@ -1,0 +1,38 @@
+{
+  "name": "leetcode-sync-mcp-server",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP server for reading and syncing LeetCode submissions to GitHub",
+  "main": "dist/local-server.js",
+  "bin": {
+    "leetcode-sync-mcp": "dist/local-server.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "check": "tsc --noEmit",
+    "start:local": "node dist/local-server.js",
+    "start:remote": "node dist/remote-server.js",
+    "dev:local": "tsx src/local-server.ts",
+    "dev:remote": "tsx src/remote-server.ts",
+    "sync:scheduled": "node dist/scheduled-sync.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/node": "^2.1.0",
+    "@modelcontextprotocol/server": "^2.0.0",
+    "@octokit/rest": "^22.0.0",
+    "axios": "^1.12.0",
+    "dotenv": "^17.2.0",
+    "turndown": "^7.2.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.5.0",
+    "@types/turndown": "^5.0.5",
+    "tsx": "^4.20.0",
+    "typescript": "^6.0.0"
+  }
+}

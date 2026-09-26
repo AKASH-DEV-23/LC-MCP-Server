@@ -1,0 +1,38 @@
+name: Sync Leetcode concurrency
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 2 * * *"
+    - cron: "30 18 * * *"
+
+concurrency:
+  group: leetcode-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npm run sync:scheduled
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPO: ${{ github.repository }}
+          LEETCODE_CSRF_TOKEN: ${{ secrets.LEETCODE_CSRF_TOKEN }}
+          LEETCODE_SESSION: ${{ secrets.LEETCODE_SESSION_ID }}
+          DESTINATION_FOLDER: DSA
+          COMMIT_HEADER: "[commit]"
+          VERBOSE: "true"
+          SYNC_DAILY_QUESTION: "true"
+          SYNC_DAILY_LANGUAGE: java
+          SUBMIT_DAILY_BOILERPLATE: "false"

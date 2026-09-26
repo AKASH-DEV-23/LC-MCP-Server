@@ -1,0 +1,17 @@
+{
+  "servers": {
+    "leetcode-sync-local": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["ABSOLUTE_PATH/dist/local-server.js"],
+      "env": {
+        "GITHUB_TOKEN": "YOUR_GITHUB_TOKEN",
+        "GITHUB_REPO": "owner/repository",
+        "LEETCODE_CSRF_TOKEN": "YOUR_CSRF_TOKEN",
+        "LEETCODE_SESSION": "YOUR_SESSION",
+        "DESTINATION_FOLDER": "DSA",
+        "COMMIT_HEADER": "[commit]"
+      }
+    }
+  }
+}
