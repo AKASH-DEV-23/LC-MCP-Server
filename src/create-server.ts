@@ -16,10 +16,12 @@ export function createLeetCodeMcpServer(): McpServer {
   server.registerTool("leetcode_get_daily_question", {
     description: "Read today's LeetCode daily question and boilerplate for a language.",
     inputSchema: z.object({ language: z.string().min(1).default("java") })
-  }, async ({ language }) => { try {
-    const { lc } = services(); const daily = await lc.daily(); const question = await lc.question(daily.titleSlug);
-    return result({ daily, questionId: question.questionId, language, code: question.codeSnippets.find(x => x.langSlug === language)?.code ?? null, markdown: lc.toMarkdown({ ...question, title: daily.title }) });
-  } catch (e) { return failure(e); } });
+  }, async ({ language }) => {
+    try {
+      const { lc } = services(); const daily = await lc.daily(); const question = await lc.question(daily.titleSlug);
+      return result({ daily, questionId: question.questionId, language, code: question.codeSnippets.find(x => x.langSlug === language)?.code ?? null, markdown: lc.toMarkdown({ ...question, title: daily.title }) });
+    } catch (e) { return failure(e); }
+  });
 
   server.registerTool("leetcode_sync_solved_to_github", {
     description: "Preview or commit accepted LeetCode submissions to GitHub. dryRun defaults to true.",
@@ -30,6 +32,25 @@ export function createLeetCodeMcpServer(): McpServer {
     description: "Preview or commit daily boilerplate to GitHub. LeetCode submission is optional and disabled by default.",
     inputSchema: z.object({ language: z.string().min(1).default("java"), dryRun: z.boolean().default(true), submitBoilerplate: z.boolean().default(false) })
   }, async ({ language, dryRun, submitBoilerplate }) => { try { return result(await syncDaily(language, dryRun, submitBoilerplate)); } catch (e) { return failure(e); } });
+
+  server.registerTool("leetcode_get_profile", {
+    description: "Read the authenticated user's LeetCode profile, solving stats, and contest rating.",
+    inputSchema: z.object({})
+  }, async () => { try { return result(await services().lc.getProfile()); } catch (e) { return failure(e); } });
+
+  server.registerTool("leetcode_get_progress", {
+    description: "Read recent LeetCode progress and activity from the user's calendar.",
+    inputSchema: z.object({})
+  }, async () => { try { return result(await services().lc.getProgress()); } catch (e) { return failure(e); } });
+
+  server.registerTool("leetcode_submit_solution", {
+    description: "Submit a LeetCode solution for a problem by question id and wait for the final result.",
+    inputSchema: z.object({
+      questionId: z.union([z.string(), z.number()]),
+      language: z.string().min(1),
+      code: z.string().min(1),
+    })
+  }, async ({ questionId, language, code }) => { try { return result(await services().lc.submitSolution(questionId, language, code)); } catch (e) { return failure(e); } });
 
   return server;
 }
