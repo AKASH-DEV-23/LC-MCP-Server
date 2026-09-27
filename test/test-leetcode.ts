@@ -15,15 +15,15 @@ async function test() {
             }
           }
         `,
-        variables: {}
+        variables: {},
       },
       {
         timeout: 30000,
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "leetcode-sync-mcp/1.0"
-        }
-      }
+          "User-Agent": "leetcode-sync-mcp/1.0",
+        },
+      },
     );
 
     console.log("SUCCESS");

@@ -1,9 +1,6 @@
 #!/usr/bin/env node
 
-import {
-  createServer,
-  type ServerResponse,
-} from "node:http";
+import { createServer, type ServerResponse } from "node:http";
 
 import { createMcpHandler } from "@modelcontextprotocol/server";
 import { toNodeHandler } from "@modelcontextprotocol/node";
@@ -17,12 +14,9 @@ const allowedHosts = (process.env.ALLOWED_HOSTS || "")
   .map((v) => v.trim().toLowerCase())
   .filter(Boolean);
 
-const handler = createMcpHandler(
-  () => createLeetCodeMcpServer(),
-  {
-    responseMode: "json",
-  },
-);
+const handler = createMcpHandler(() => createLeetCodeMcpServer(), {
+  responseMode: "json",
+});
 
 const nodeHandler = toNodeHandler(handler, {
   maxRequestBodySize: 1024 * 1024,
@@ -36,18 +30,12 @@ function hostAllowed(req: { headers: { host?: string } }): boolean {
     return true;
   }
 
-  const hostname = (req.headers.host || "")
-    .split(":")[0]
-    .toLowerCase();
+  const hostname = (req.headers.host || "").split(":")[0].toLowerCase();
 
   return allowedHosts.includes(hostname);
 }
 
-function json(
-  res: ServerResponse,
-  status: number,
-  body: unknown,
-): void {
+function json(res: ServerResponse, status: number, body: unknown): void {
   res.writeHead(status, {
     "content-type": "application/json",
     "cache-control": "no-store",
@@ -60,10 +48,7 @@ const httpServer = createServer((req, res) => {
   /*
    * Public health endpoint
    */
-  if (
-    req.url === "/health" &&
-    req.method === "GET"
-  ) {
+  if (req.url === "/health" && req.method === "GET") {
     return json(res, 200, {
       status: "ok",
       service: "leetcode-sync-mcp",
@@ -100,9 +85,7 @@ const httpServer = createServer((req, res) => {
 });
 
 httpServer.listen(port, host, () => {
-  console.log(
-    `LeetCode Sync MCP listening on http://${host}:${port}/mcp`,
-  );
+  console.log(`LeetCode Sync MCP listening on http://${host}:${port}/mcp`);
 });
 
 const shutdown = async () => {
